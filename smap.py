@@ -6,10 +6,12 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 import pickle
 import datetime
-
+import csv
+import hyperlink
 from time import sleep
+#pikmike
 
-totPages = 40
+totPages = 1
 Ac = "Accepted"
 arr = [ "Pupil" ,"Specialist" ,"Expert" , "Candidate Master" , "International Master"]
 if __name__ == "__main__":
@@ -26,33 +28,38 @@ if __name__ == "__main__":
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.CLASS_NAME, "status-frame-datatable"))
         )
-        cur = 52
-        while(cur >= totPages):
-            driver.get("https://codeforces.com/submissions/" + userId + "/page/" + str(cur))
-            WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "status-frame-datatable"))
-            )
-            table = driver.find_element_by_css_selector('table.status-frame-datatable')
-            for row in table.find_elements_by_css_selector("tr"):
-                isAc = False
-                isCol = False
-                linkP = ""
-                itr = 0
-                for cell in row.find_elements_by_tag_name("td"):
-                    if itr == 5:
-                        theAc = cell.find_element_by_tag_name("span")
-                        if Ac == theAc.text:
-                            isAc = True
-                    if itr == 2:
-                        hr = cell.find_element_by_tag_name("a")
-                        if hr.get_attribute("title") == color + " " + userId:
-                            isCol = True
-                    if itr == 3:
-                        ll = cell.find_element_by_tag_name("a")
-                        linkP = ll.get_attribute("href")
-                    itr = itr + 1
-                if isAc and isCol:
-                    print(linkP)
-            cur = cur - 1
+        cur = 3 #maxpages
+        with open('ProblemList.csv', 'w', newline = '\n') as f:
+            thewriter = csv.writer(f)
+            while(cur >= totPages):
+                driver.get("https://codeforces.com/submissions/" + userId + "/page/" + str(cur))
+                WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CLASS_NAME, "status-frame-datatable"))
+                )
+                table = driver.find_element_by_css_selector('table.status-frame-datatable')
+                for row in table.find_elements_by_css_selector("tr"):
+                    isAc = False
+                    isCol = False
+                    linkP = ""
+                    nameP = ""
+                    itr = 0
+                    for cell in row.find_elements_by_tag_name("td"):
+                        if itr == 5:
+                            theAc = cell.find_element_by_tag_name("span")
+                            if Ac == theAc.text:
+                                isAc = True
+                        if itr == 2:
+                            hr = cell.find_element_by_tag_name("a")
+                            if hr.get_attribute("title") == color + " " + userId:
+                                isCol = True
+                        if itr == 3:
+                            nameP = cell.text
+                            ll = cell.find_element_by_tag_name("a")
+                            linkP = ll.get_attribute("href")
+                        itr = itr + 1
+                    if isAc and isCol:
+                        thewriter.writerow([nameP, linkP])
+                        print(linkP)
+                cur = cur - 1
     finally:
         driver.quit()
