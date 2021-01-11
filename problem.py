@@ -14,7 +14,7 @@ import hyperlink
 from time import sleep
 #pikmike
 
-totPages = 1
+totPages = 1 #upto this page
 Ac = "Accepted"
 arr = [ "Pupil" ,"Specialist" ,"Expert" , "Candidate Master" , "International Master"]
 if __name__ == "__main__":
@@ -27,10 +27,7 @@ if __name__ == "__main__":
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.CLASS_NAME, "status-frame-datatable"))
         )
-        driver.find_element_by_id("showUnofficial").click()
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "status-frame-datatable"))
-        )
+        
         cur = 3 #maxpages
         with open('ProblemList.csv', 'w', newline = '\n') as f:
             thewriter = csv.writer(f)
