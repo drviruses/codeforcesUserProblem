@@ -12,7 +12,6 @@ import datetime
 import csv
 import hyperlink
 from time import sleep
-#pikmike
 
 totPages = 1 #upto this page
 Ac = "Accepted"
